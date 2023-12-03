@@ -1,1 +1,1 @@
-# SmartTH
+# Rip Detection App
