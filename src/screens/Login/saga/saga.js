@@ -15,7 +15,7 @@ import {
 
 export function* loginAction(action) {
   try {
-    LoadingService.show();
+    // LoadingService.show();
     const responseData = yield call(userLogin, action.payload);
     if (responseData.token) {
       const responseInfo = yield call(userData, responseData.token);

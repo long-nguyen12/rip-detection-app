@@ -9,8 +9,8 @@ import * as ROUTES from "../../constants/routes";
 export default function AppLoaderScreen(props) {
     const { navigation } = props;
 
-    const token = useSelector((state) => state.auth.me);
-
+    const token = useSelector((state) => state.auth);
+    console.log(token)
     React.useEffect(() => {
         if (token) {
             navigation.replace(ROUTES.APP_MAIN);

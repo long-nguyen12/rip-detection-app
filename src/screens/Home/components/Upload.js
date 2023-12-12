@@ -1,6 +1,6 @@
-import { Button, Text } from "@ui-kitten/components";
+import { Button, Modal, Text } from "@ui-kitten/components";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { tw } from "react-native-tailwindcss";
 import { PRIMARY } from "../../../constants/colors";
 import { containerStyles } from "../../../stylesContainer";
@@ -20,19 +20,13 @@ import {
 } from "../../../epics-reducers/services/uploadServices";
 import LoadingService from "../../../components/Loading/LoadingService";
 import * as ROUTES from "../../../constants/routes";
+import Loader from "../../App/Loader";
 
 export default function UploadScreen(props) {
   useLayoutEffect(() => {
     props.navigation.setOptions({
       headerTitle: "Nhận dạng",
       cardShadowEnabled: false,
-      // headerStyle: {
-      //   backgroundColor: PRIMARY,
-      // },
-      // headerTitleStyle: {
-      //   color: "white",
-      // },
-      // headerTitleAlign: "center",
       headerLeft: () => {
         return (
           <TouchableOpacity
@@ -54,6 +48,7 @@ export default function UploadScreen(props) {
   const [dataSource, setDataSource] = useState(null);
   const [isVideo, setIsVideo] = useState(false);
   const [status, setStatus] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -72,7 +67,7 @@ export default function UploadScreen(props) {
   };
 
   async function uploadFile() {
-    LoadingService.show();
+    setLoading(true);
     let formData = new FormData();
 
     const { uri } = dataSource;
@@ -95,7 +90,7 @@ export default function UploadScreen(props) {
       });
       navigationService.replace(ROUTES.APP_MAIN);
     }
-    LoadingService.hide();
+    setLoading(false);
   }
 
   function renderResult() {
@@ -143,6 +138,9 @@ export default function UploadScreen(props) {
 
   return (
     <SafeAreaView style={[containerStyles.content]}>
+      <Modal visible={loading} backdropStyle={styles.backdrop}>
+        <Loader />
+      </Modal>
       {!dataSource && (
         <View style={[tw.selfCenter]}>
           <TouchableOpacity onPress={pickImage}>
@@ -175,3 +173,9 @@ export default function UploadScreen(props) {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  backdrop: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+});

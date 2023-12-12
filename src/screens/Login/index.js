@@ -1,4 +1,4 @@
-import { Button, Input, Text } from "@ui-kitten/components";
+import { Button, Input, Modal, Text } from "@ui-kitten/components";
 import { Formik } from "formik";
 import React, { useLayoutEffect, useState } from "react";
 import {
@@ -16,33 +16,24 @@ import { useDispatch } from "react-redux";
 import EyeHideIcon from "../../assets/icons/hidepassword.svg";
 import InactiveHideIcon from "../../assets/icons/inactiveHide.svg";
 import EyeUnHideIcon from "../../assets/icons/unhidepassword.svg";
-import {
-  REGISTER_PAGE
-} from "../../constants/routes";
+import { REGISTER_PAGE } from "../../constants/routes";
 import { containerStyles } from "../../stylesContainer";
 import { userLoginRoutine } from "./saga/routines";
 import { LoginSchema } from "./schemas/schemas";
+import Loader from "../App/Loader";
 
 const { width, heigh } = Dimensions.get("window");
 
 export default function LoginPage(props) {
   useLayoutEffect(() => {
     props.navigation.setOptions({
-      // headerTitle: "Đăng nhập",
-      // cardShadowEnabled: false,
-      // headerStyle: {
-      //   backgroundColor: PRIMARY,
-      // },
-      // headerTitleStyle: {
-      //   color: "white",
-      // },
-      // headerTitleAlign: "center",
       headerShown: false,
     });
   });
 
   const [hidePassword, setHidePassword] = useState(true);
   const [active, setActive] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const initialValues = {
@@ -51,12 +42,13 @@ export default function LoginPage(props) {
   };
 
   async function onFormSubmit(values) {
+    setLoading(true);
     const data = {
       username: values.username,
       password: values.password,
     };
     dispatch(userLoginRoutine.trigger(data));
-    // props.navigation.navigate(APP_MAIN)
+    setLoading(false);
   }
 
   const toggleSecureEntry = () => {
@@ -78,9 +70,12 @@ export default function LoginPage(props) {
       </TouchableWithoutFeedback>
     );
   }
-
+  console.log(loading);
   return (
     <SafeAreaView style={[containerStyles.content]}>
+      <Modal visible={loading} backdropStyle={styles.backdrop}>
+        <Loader />
+      </Modal>
       <Image
         source={require("../../assets/logo.jpg")}
         style={[{ width: width / 3, height: width / 3 }, tw.selfCenter, tw.mT8]}
